@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report</title>
+</head>
+<body>
+    <h1>History</h1>
+    {% for clases in racer_list %}
+        <h2>{{ clases.full_name }}</h2>
+        <a href="/report/{{ clases.abbreviation }}">{{ clases.abbreviation }}</a>
+        <p>{{ clases.racer_team }}</p>
+        <p>{{ clases.lap_time }}</p>
+
+    <div>
+
+    </div>
+    {% endfor %}
+</body>
+</html>
