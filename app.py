@@ -55,11 +55,11 @@ def get_key_value(reverse):
     return get_value
 
 
-def read_from_files():
-    """Read data from files
+"""def read_from_files():
+    Read data from files
 
     :return: racer_dict with all data
-    """
+    
     racer_dict = {}
     datetime_format = '%Y-%m-%d_%H:%M:%S.%f'
     file_path = os.path.join(os.path.dirname(__file__), "data")
@@ -80,6 +80,38 @@ def read_from_files():
             abbr, full_name, team = line.strip().split("_")
             racer_dict[abbr].full_name = full_name
             racer_dict[abbr].racer_team = team
+    return racer_dict"""
+
+
+def read_from_files(path):
+    file_in_lines = list()
+    file_path = os.path.join(os.path.dirname(__file__), "data")
+    with open(os.path.join(file_path, path), "r") as file:
+        for line in file:
+            file_in_lines.append(line)
+    return file_in_lines
+
+
+def create_racers_data():
+    racer_dict = {}
+    datetime_format = '%Y-%m-%d_%H:%M:%S.%f'
+    file = read_from_files('start.log')
+    for line in file:
+        abbr = line[:3].rstrip()
+        start_time = datetime.strptime(line[3:].rstrip(), datetime_format)
+        racer_dict[abbr] = Racer(abbreviation=abbr, start_time=start_time)
+
+    file = read_from_files("end.log")
+    for line in file:
+        abbr = line[:3].rstrip()
+        end_time = datetime.strptime(line[3:].rstrip(), datetime_format)
+        racer_dict[abbr].end_time = end_time
+
+    file = read_from_files("end_name.txt")
+    for line in file:
+        abbr, full_name, team = line.strip().split("_")
+        racer_dict[abbr].full_name = full_name
+        racer_dict[abbr].racer_team = team
     return racer_dict
 
 
@@ -88,7 +120,7 @@ def build_report(sorting_type):
 
     Return sorted racer_list
     """
-    racer_dict = read_from_files()
+    racer_dict = create_racers_data()
     racer_list = [clases for clases in racer_dict.values()]
     racer_list.sort(key=get_key_value(sorting_type), reverse=sorting_type)
     return racer_list
@@ -100,7 +132,7 @@ def find_racer(racer):
     :param racer:
     :return: data right racer
     """
-    racer_dict = read_from_files()
+    racer_dict = create_racers_data()
     return racer_dict[racer]
 
 
@@ -131,7 +163,7 @@ def start_report():
     else:
         racer_list = find_racer(args().racer)
         print_racer(racer_list)"""
-    racer_list = build_report(True)
+    racer_list = build_report(False)
     print_report(racer_list)
     return render_template('report.html', racer_list=racer_list)
 
