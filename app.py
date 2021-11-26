@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
-import os
+from pathlib import Path
 from flask import Flask, render_template, redirect
 import wikipedia
 
@@ -84,12 +84,10 @@ def get_key_value(reverse):
 
 
 def read_from_files(path):
-    file_in_lines = list()
-    file_path = os.path.join(os.path.dirname(__file__), "data")
-    with open(os.path.join(file_path, path), "r") as file:
-        for line in file:
-            file_in_lines.append(line)
-    return file_in_lines
+    d = Path(__file__).resolve().parent
+    filepath = d / 'data' / path
+    with open(filepath, 'r') as f:
+        return f.readlines()
 
 
 def create_racers_data():
