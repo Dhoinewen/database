@@ -2,27 +2,14 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from pathlib import Path
 from flask import Flask, render_template, redirect
+from flask_restful import reqparse, abort, Api, Resource
 import wikipedia
 
 
 app = Flask(__name__)
+api = Api(app)
 
 DIVISION = 15
-
-
-""" def args():
-    Settings for terminal
-
-    :return: terminal params
-    
-    parser = argparse.ArgumentParser()
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument("--asc", help="Show all list in asc", default=False, action="store_false", dest="order")
-    group.add_argument("--desc", help="Show all list in asc", default=False, action="store_true", dest="order")
-    parser.add_argument("-r", "--racer", help="Search racer", default=None, type=str, dest="racer")
-    args = parser.parse_args()
-    return args
-    """
 
 
 @dataclass
@@ -53,34 +40,6 @@ def get_key_value(reverse):
               value = timedelta.min
         return value
     return get_value
-
-
-"""def read_from_files():
-    Read data from files
-
-    :return: racer_dict with all data
-    
-    racer_dict = {}
-    datetime_format = '%Y-%m-%d_%H:%M:%S.%f'
-    file_path = os.path.join(os.path.dirname(__file__), "data")
-    with open(os.path.join(file_path, "start.log"), "r") as file:
-        for line in file:
-            abbr = line[:3].rstrip()
-            start_time = datetime.strptime(line[3:].rstrip(), datetime_format)
-            racer_dict[abbr] = Racer(abbreviation=abbr, start_time=start_time)
-
-    with open(os.path.join(file_path, "end.log"), "r") as file:
-        for line in file:
-            abbr = line[:3].rstrip()
-            end_time = datetime.strptime(line[3:].rstrip(), datetime_format)
-            racer_dict[abbr].end_time = end_time
-
-    with open(os.path.join(file_path, "end_name.txt"), "r") as file:
-        for line in file:
-            abbr, full_name, team = line.strip().split("_")
-            racer_dict[abbr].full_name = full_name
-            racer_dict[abbr].racer_team = team
-    return racer_dict"""
 
 
 def read_from_files(path):
@@ -134,19 +93,6 @@ def find_racer(racer):
     return racer_dict[racer]
 
 
-def print_report(racer_list):
-    """print sorted list of racers
-
-    :param racer_list:
-    """
-    """
-    for position, clases in enumerate(racer_list, 1):
-        print('{0:<3}| {1:<20}| {2:<30}|'.format(position, clases.full_name, clases.racer_team), clases.lap_time)
-        if position == DIVISION:
-            print('-' * 15)
-    """
-
-
 def print_racer(racer):
     """Print data for solo racer   """
     print(racer.full_name, " | ", racer.racer_team, " | ", racer.lap_time)
@@ -155,14 +101,7 @@ def print_racer(racer):
 @app.route('/report')
 def start_report():
     """Start program"""
-    """if args().racer is None:
-        racer_list = build_report(args().order)
-        print_report(racer_list)
-    else:
-        racer_list = find_racer(args().racer)
-        print_racer(racer_list)"""
     racer_list = build_report(False)
-    print_report(racer_list)
     return render_template('report.html', racer_list=racer_list)
 
 
@@ -174,4 +113,3 @@ def racer_info(abbreviation):
 
 if __name__ == '__main__':
     app.run(debug=True)
-    "start_report()"
