@@ -1,10 +1,10 @@
-from dataclasses import dataclass, field
+import json
+
+from dataclasses import dataclass, field, asdict
 from datetime import datetime, timedelta
 from pathlib import Path
-from flask import Flask, render_template, redirect
-from flask_restful import reqparse, abort, Api, Resource
-import wikipedia
-
+from flask import Flask, Response
+from flask_restful import Api, Resource
 
 app = Flask(__name__)
 api = Api(app)
@@ -98,17 +98,29 @@ def print_racer(racer):
     print(racer.full_name, " | ", racer.racer_team, " | ", racer.lap_time)
 
 
-@app.route('/report')
+def myconverter(o):
+    if isinstance(o, datetime):
+        return o.__str__()
+
+
+def conver_to_json():
+    dict_list = list()
+    for racers in build_report(True):
+        dict_list.append(asdict(racers))
+    return json.dumps(dict_list, default=myconverter, indent=4)
+
+
 def start_report():
     """Start program"""
-    racer_list = build_report(False)
-    return render_template('report.html', racer_list=racer_list)
+    return conver_to_json()
 
 
-@app.route('/report/<string:abbreviation>')
-def racer_info(abbreviation):
-    racer_data = find_racer(abbreviation)
-    return redirect(wikipedia.page(racer_data.full_name).url, code=404)
+class RacerList(Resource):
+    def get(self):
+        return Response(start_report(), mimetype='application/json')
+
+
+api.add_resource(RacerList, '/report')
 
 
 if __name__ == '__main__':
