@@ -1,6 +1,7 @@
 import json
 
 from xml.etree import cElementTree
+from dict2xml import dict2xml
 from dataclasses import dataclass, field, asdict
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -113,16 +114,11 @@ def conver_to_json():
 
 def convert_to_xml():
     dict_list = list()
+    dict_for_xml = dict()
     for racers in build_report(True):
         dict_list.append(asdict(racers))
-    xml = cElementTree.Element('racerList')
-    for racers in dict_list:
-        xml_racer = cElementTree.SubElement(xml, 'racer')
-        xml_racer.attrib = {'abbreviation': racers['abbreviation']}
-        for elem in racers:
-            xml_data_racer = cElementTree.SubElement(xml_racer, elem)
-            xml_data_racer.text = myconverter(racers[elem])
-    return cElementTree.dump(xml)
+    dict_for_xml['racer'] = dict_list
+    return '<?xml version = "1.0" encoding = "UTF-8" standalone = "no"?>', dict2xml(dict_for_xml, wrap="racerList", indent="  ")
 
 
 def start_report():
