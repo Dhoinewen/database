@@ -1,5 +1,6 @@
 import json
 
+from xml.etree import cElementTree
 from dataclasses import dataclass, field, asdict
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -110,6 +111,20 @@ def conver_to_json():
     return json.dumps(dict_list, default=myconverter, indent=4)
 
 
+def convert_to_xml():
+    dict_list = list()
+    for racers in build_report(True):
+        dict_list.append(asdict(racers))
+    xml = cElementTree.Element('racerList')
+    for racers in dict_list:
+        xml_racer = cElementTree.SubElement(xml, 'racer')
+        xml_racer.attrib = {'abbreviation': racers['abbreviation']}
+        for elem in racers:
+            xml_data_racer = cElementTree.SubElement(xml_racer, elem)
+            xml_data_racer.text = myconverter(racers[elem])
+    return cElementTree.dump(xml)
+
+
 def start_report():
     """Start program"""
     return conver_to_json()
@@ -117,10 +132,16 @@ def start_report():
 
 class RacerList(Resource):
     def get(self):
-        return Response(start_report(), mimetype='application/json')
+        return Response(conver_to_json(), mimetype='application/json')
+
+
+class RacerListXML(Resource):
+    def get(self):
+        return Response(convert_to_xml(), mimetype='text/xml')
 
 
 api.add_resource(RacerList, '/report')
+api.add_resource(RacerListXML, '/report-xml')
 
 
 if __name__ == '__main__':
