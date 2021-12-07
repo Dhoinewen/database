@@ -5,3 +5,4 @@
 *include
 *api.py
 *test.py
+*__pycache__/

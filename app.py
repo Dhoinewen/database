@@ -1,12 +1,10 @@
-import json
 
-from xml.etree import cElementTree
-from dict2xml import dict2xml
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from pathlib import Path
 from flask import Flask, Response
 from flask_restful import Api, Resource
+from helpers import convert_to_json, convert_to_xml
 
 app = Flask(__name__)
 api = Api(app)
@@ -95,45 +93,22 @@ def find_racer(racer):
     return racer_dict[racer]
 
 
-def print_racer(racer):
-    """Print data for solo racer   """
-    print(racer.full_name, " | ", racer.racer_team, " | ", racer.lap_time)
+def build_xml():
+    return convert_to_xml(build_report(True))
 
 
-def myconverter(o):
-    if isinstance(o, datetime):
-        return o.__str__()
-
-
-def conver_to_json():
-    dict_list = list()
-    for racers in build_report(True):
-        dict_list.append(asdict(racers))
-    return json.dumps(dict_list, default=myconverter, indent=4)
-
-
-def convert_to_xml():
-    dict_list = list()
-    dict_for_xml = dict()
-    for racers in build_report(True):
-        dict_list.append(asdict(racers))
-    dict_for_xml['racer'] = dict_list
-    return '<?xml version = "1.0" encoding = "UTF-8" standalone = "no"?>', dict2xml(dict_for_xml, wrap="racerList", indent="  ")
-
-
-def start_report():
-    """Start program"""
-    return conver_to_json()
+def build_json():
+    return convert_to_json(build_report(True))
 
 
 class RacerList(Resource):
     def get(self):
-        return Response(conver_to_json(), mimetype='application/json')
+        return Response(build_json(), mimetype='application/json')
 
 
 class RacerListXML(Resource):
     def get(self):
-        return Response(convert_to_xml(), mimetype='text/xml')
+        return Response(build_xml(), mimetype='text/xml')
 
 
 api.add_resource(RacerList, '/report')
