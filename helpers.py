@@ -18,9 +18,10 @@ def convert_to_json(racer_list):
 
 
 def convert_to_xml(racer_list):
-    dict_list = list()
+    racers_dict = dict()
     dict_for_xml = dict()
     for racers in racer_list:
-        dict_list.append(asdict(racers))
-    dict_for_xml['racer'] = dict_list
-    return '<?xml version = "1.0" encoding = "UTF-8" standalone = "no"?>', dict2xml(dict_for_xml, wrap="racerList", indent="  ")
+        racers_dict[racers.abbreviation] = asdict(racers)
+    dict_for_xml['racers'] = racers_dict
+    return '<?xml version = "1.0" encoding = "UTF-8" standalone = "no"?>', dict2xml(dict_for_xml, wrap="racerList",
+                                                                                    indent="  ")

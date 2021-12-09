@@ -1,4 +1,3 @@
-
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -8,8 +7,6 @@ from helpers import convert_to_json, convert_to_xml
 
 app = Flask(__name__)
 api = Api(app)
-
-DIVISION = 15
 
 
 @dataclass
