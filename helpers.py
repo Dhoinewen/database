@@ -23,5 +23,6 @@ def convert_to_xml(racer_list):
     for racers in racer_list:
         racers_dict[racers.abbreviation] = asdict(racers)
     dict_for_xml['racers'] = racers_dict
-    return '<?xml version = "1.0" encoding = "UTF-8" standalone = "no"?>', dict2xml(dict_for_xml, wrap="racerList",
+    xml = '<?xml version = "1.0" encoding = "UTF-8" standalone = "no"?>' + dict2xml(dict_for_xml, wrap="racerList",
                                                                                     indent="  ")
+    return xml
