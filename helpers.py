@@ -10,6 +10,10 @@ def myconverter(o):
         return o.__str__()
 
 
+def convert_racer_to_json(racer):
+    return json.dumps(asdict(racer), default=myconverter, indent=4)
+
+
 def convert_to_json(racer_list):
     dict_list = list()
     for racers in racer_list:
