@@ -1,8 +1,7 @@
-import config
-
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from pathlib import Path
+from functools import lru_cache
 
 
 
@@ -42,7 +41,7 @@ def read_from_files(path):
     with open(filepath, 'r') as f:
         return f.readlines()
 
-
+@lru_cache(maxsize=None)
 def create_racers_data():
     racer_dict = {}
     datetime_format = '%Y-%m-%d_%H:%M:%S.%f'
@@ -63,7 +62,6 @@ def create_racers_data():
         abbr, full_name, team = line.strip().split("_")
         racer_dict[abbr].full_name = full_name
         racer_dict[abbr].racer_team = team
-    config.RACER_DICT = racer_dict
     return racer_dict
 
 
@@ -77,4 +75,4 @@ def build_report(sorting_type):
     racer_dict = create_racers_data()
     racer_list = [clases for clases in racer_dict.values()]
     racer_list.sort(key=get_key_value(sorting_type), reverse=sorting_type)
-    config.RACER_LIST = racer_list
+    return racer_list
