@@ -1,12 +1,17 @@
 from data import build_report, create_racers_data
 from flask import Flask, Response
-from flask_restful import Api, Resource
+from flask_restful import Api, Resource, abort
 from helpers import convert_to_json, convert_to_xml, convert_racer_to_json
 from flasgger import Swagger
 
 app = Flask(__name__)
 api = Api(app)
 swagger = Swagger(app)
+
+
+def abort_if_racer_doesnt_exist(racer_abr):
+    if racer_abr not in create_racers_data():
+        abort(404, message="racer doesn't exist")
 
 
 class RacerList(Resource):
@@ -24,6 +29,7 @@ class Racer(Resource):
         """
         file: app.yml
         """
+        abort_if_racer_doesnt_exist(racer_abr)
         return Response(convert_racer_to_json(create_racers_data()[racer_abr]), mimetype='application/json')
 
 
