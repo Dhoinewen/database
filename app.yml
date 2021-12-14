@@ -1,0 +1,17 @@
+racer_abr swagger
+
+---
+parameters:
+  - in: path
+    name: racer_abr
+    type: string
+    required: true
+responses:
+  200:
+    description: A single racer_abr
+    schema:
+      id: racer
+      properties:
+        racer_abr:
+          type: string
+          description: The abr of the racer
