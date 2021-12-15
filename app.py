@@ -9,11 +9,6 @@ api = Api(app)
 swagger = Swagger(app)
 
 
-def abort_if_racer_doesnt_exist(racer_abr):
-    if racer_abr not in create_racers_data():
-        abort(404, message="racer doesn't exist")
-
-
 class RacerList(Resource):
     def get(self):
         return Response(convert_to_json(build_report('asc')), mimetype='application/json')
@@ -29,7 +24,8 @@ class Racer(Resource):
         """
         file: app.yml
         """
-        abort_if_racer_doesnt_exist(racer_abr)
+        if racer_abr not in create_racers_data():
+            abort(404, message="racer doesn't exist")
         return Response(convert_racer_to_json(create_racers_data()[racer_abr]), mimetype='application/json')
 
 
