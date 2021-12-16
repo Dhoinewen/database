@@ -1,4 +1,4 @@
-from data import build_report, create_racers_data
+from data import build_report, create_racers_data, create_db
 from flask import Flask, Response
 from flask_restful import Api, Resource, abort
 from helpers import convert_to_json, convert_to_xml, convert_racer_to_json
@@ -35,4 +35,5 @@ api.add_resource(Racer, '/report/<racer_abr>')
 
 
 if __name__ == '__main__':
+    create_db()
     app.run(debug=True)

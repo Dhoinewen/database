@@ -1,8 +1,23 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from datetime import datetime, timedelta
 from pathlib import Path
 from functools import lru_cache
+from peewee import *
 
+
+db = SqliteDatabase('database.db')
+
+
+class RacerDB(Model):
+    id = PrimaryKeyField(unique=True)
+    start_time = DateTimeField()
+    end_time = DateTimeField()
+    full_name = CharField()
+    racer_team = CharField()
+    abbreviation = CharField()
+
+    class Meta:
+        database = db
 
 
 @dataclass
@@ -76,3 +91,17 @@ def build_report(sorting_type):
     racer_list = [clases for clases in racer_dict.values()]
     racer_list.sort(key=get_key_value(sorting_type), reverse=sorting_type)
     return racer_list
+
+
+def create_db():
+    dict_list = list()
+    for racers in build_report('asc'):
+        dict_list.append(asdict(racers))
+    db.connect()
+    db.create_tables([RacerDB])
+    RacerDB.insert_many(dict_list).execute()
+    db.close()
+
+
+
+
