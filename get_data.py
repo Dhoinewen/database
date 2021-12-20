@@ -4,7 +4,6 @@ from pathlib import Path
 from functools import lru_cache
 
 
-
 @dataclass
 class Racer:
     start_time: datetime = field(default=None)
