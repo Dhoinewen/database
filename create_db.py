@@ -18,7 +18,7 @@ class RacerDB(Model):
         database = db
 
 
-def create_db():
+def db_create():
     dict_list = list()
     for racers in build_report('asc'):
         dict_list.append(asdict(racers))
