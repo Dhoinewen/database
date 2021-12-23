@@ -26,4 +26,5 @@ def get_racer_data_from_db(racer_abr):
              'full_name': data.full_name,
              'racer_team': data.racer_team,
              'abbreviation': data.abbreviation}
+    db.close()
     return racer
